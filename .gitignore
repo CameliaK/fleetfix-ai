@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+# Node
+node_modules/
+dist/
+# Secretos
+.env
+# Artefactos ML
+*.joblib
+# Editor / OS
+.vscode/
+.DS_Store
