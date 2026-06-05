@@ -3,3 +3,5 @@ uvicorn[standard]
 sqlalchemy
 pyodbc
 python-dotenv
+pdfplumber
+python-multipart
