@@ -4,7 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-load_dotenv(find_dotenv())  # busca el .env en la raíz del proyecto
+load_dotenv(find_dotenv())  # finds the .env at the project root
 
 password = os.environ["MSSQL_SA_PASSWORD"]
 conn_str = (

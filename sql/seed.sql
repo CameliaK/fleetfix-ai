@@ -1,3 +1,3 @@
 USE fleetfix;
-INSERT INTO clientes (nombre, email) VALUES ('Transportes del Norte', 'ops@tdn.ca');
-INSERT INTO vehiculos (cliente_id, placa, tipo, anio) VALUES (1, 'ABC-123', 'camión', 2019);
+INSERT INTO customers (name, email) VALUES ('Transportes del Norte', 'ops@tdn.ca');
+INSERT INTO vehicles (customer_id, plate, vehicle_type, model_year) VALUES (1, 'ABC-123', 'truck', 2019);
