@@ -5,3 +5,6 @@ pyodbc
 python-dotenv
 pdfplumber
 python-multipart
+scikit-learn
+pandas
+joblib
