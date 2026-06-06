@@ -5,11 +5,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 load_dotenv(find_dotenv())  # finds the .env at the project root
+password = os.getenv("MSSQL_SA_PASSWORD")
 
-password = os.environ["MSSQL_SA_PASSWORD"]
+db_host = os.environ.get("DB_HOST", "localhost,1433")
 conn_str = (
     "DRIVER={ODBC Driver 18 for SQL Server};"
-    "SERVER=localhost,1433;"
+    f"SERVER={db_host};"
     "DATABASE=fleetfix;"
     f"UID=sa;PWD={password};"
     "TrustServerCertificate=yes;"

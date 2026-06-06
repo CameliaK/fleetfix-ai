@@ -66,4 +66,15 @@ CREATE TABLE supplier_invoice_lines (
     quantity            DECIMAL(10,2),
     unit_price          DECIMAL(12,2)
 );
+
+CREATE TABLE llm_logs (
+    id                INT IDENTITY PRIMARY KEY,
+    operation         NVARCHAR(50),
+    model             NVARCHAR(50),
+    prompt_tokens     INT,
+    completion_tokens INT,
+    cost_usd          DECIMAL(10,6),
+    latency_ms        INT,
+    created_at        DATETIME2 DEFAULT SYSDATETIME()
+);
 GO

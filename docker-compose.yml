@@ -17,6 +17,20 @@ services:
       N8N_SECURE_COOKIE: "false"
     volumes:
       - n8n_data:/home/node/.n8n
+  
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+      DB_HOST: "sqlserver"
+      MODEL_PATH: "/app/ml/cost_model.joblib"
+    volumes:
+      - ./ml:/app/ml          # so the trained model is available in the container
+    depends_on:
+      - sqlserver
 
 volumes:
   mssql_data:
