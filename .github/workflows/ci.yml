@@ -15,4 +15,4 @@ jobs:
       - run: pip install pytest httpx ruff
       - run: ruff check backend
       - run: pytest backend/tests
-        working-directory: .
+        working-directory: backend
