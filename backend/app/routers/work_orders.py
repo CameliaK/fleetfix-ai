@@ -112,10 +112,10 @@ def get_invoice(order_id: int):
         "source_language": inv["source_language"],
         "status": inv["status"],
         "lines": [
-            {"description": l["description"],
-             "quantity": float(l["quantity"]),
-             "unit_price": float(l["unit_price"])}
-            for l in lines
+            {"description": line["description"],
+             "quantity": float(line["quantity"]),
+             "unit_price": float(line["unit_price"])}
+            for line in lines
         ],
     }
 
