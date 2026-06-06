@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FleetFix — Invoice Review</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; color: #1f2937; }
+    h1 { font-size: 1.4rem; }
+    .layout { display: flex; gap: 2rem; }
+    .list button { display: block; width: 220px; text-align: left; margin: .3rem 0;
+      padding: .6rem .8rem; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; cursor: pointer; }
+    .list button:hover { background: #f3f4f6; }
+    .panel { flex: 1; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1.2rem; min-height: 200px; }
+    table { border-collapse: collapse; width: 100%; margin-top: .8rem; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: .5rem; text-align: left; font-size: .9rem; }
+    .approve { margin-top: 1rem; padding: .6rem 1rem; border: 0; border-radius: 8px;
+      background: #1f3a5f; color: #fff; cursor: pointer; }
+    .tag { font-size: .75rem; background: #eef2ff; color: #3730a3; padding: .15rem .5rem; border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <h1>FleetFix — Invoice Review</h1>
+  <div class="layout">
+    <div class="list">
+      <h3>Pending</h3>
+      <div id="pending"></div>
+    </div>
+    <div class="panel" id="detail">Select a work order to review.</div>
+  </div>
+
+  <script>
+    async function loadPending() {
+      const orders = await (await fetch("/api/pending")).json();
+      const box = document.getElementById("pending");
+      box.innerHTML = orders.length ? "" : "<em>Nothing pending 🎉</em>";
+      orders.forEach(o => {
+        const b = document.createElement("button");
+        b.textContent = `Order #${o.id} — vehicle ${o.vehicle_id}`;
+        b.onclick = () => viewInvoice(o.id);
+        box.appendChild(b);
+      });
+    }
+
+    async function viewInvoice(id) {
+      const inv = await (await fetch(`/api/orders/${id}/invoice`)).json();
+      const lines = inv.lines.map(l =>
+        `<tr><td>${l.description}</td><td>${l.quantity}</td><td>${l.unit_price.toFixed(2)}</td></tr>`).join("");
+      document.getElementById("detail").innerHTML = `
+        <span class="tag">${inv.source_language}</span>
+        <h3>Invoice #${inv.invoice_id} — ${inv.currency} ${inv.total.toFixed(2)}</h3>
+        <p><strong>Summary:</strong> ${inv.clean_text ?? ""}</p>
+        <table><thead><tr><th>Description</th><th>Qty</th><th>Unit price</th></tr></thead>
+        <tbody>${lines}</tbody></table>
+        <button class="approve" onclick="approve(${id})">Approve invoice</button>`;
+    }
+
+    async function approve(id) {
+      await fetch(`/api/orders/${id}/approve`, { method: "POST" });
+      document.getElementById("detail").innerHTML = "<strong>✅ Approved.</strong>";
+      loadPending();   // it drops off the pending list
+    }
+
+    loadPending();
+  </script>
+</body>
+</html>

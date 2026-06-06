@@ -85,3 +85,47 @@ def generate_invoice(order_id: int):
         "total": round(total, 2),
         "lines": [line.model_dump() for line in invoice.lines],
     }
+
+@router.get("/{order_id}/invoice")
+def get_invoice(order_id: int):
+    with engine.connect() as conn:
+        inv = conn.execute(
+            text("""SELECT i.id AS invoice_id, i.total, i.currency,
+                           w.clean_text, w.source_language, w.status
+                    FROM invoices i
+                    JOIN work_orders w ON w.id = i.work_order_id
+                    WHERE i.work_order_id = :id"""),
+            {"id": order_id},
+        ).mappings().first()
+        if inv is None:
+            raise HTTPException(404, "No invoice for this work order")
+        lines = conn.execute(
+            text("""SELECT description, quantity, unit_price
+                    FROM invoice_lines WHERE invoice_id = :iid"""),
+            {"iid": inv["invoice_id"]},
+        ).mappings().all()
+    return {
+        "invoice_id": inv["invoice_id"],
+        "total": float(inv["total"]) if inv["total"] is not None else 0,
+        "currency": inv["currency"],
+        "clean_text": inv["clean_text"],
+        "source_language": inv["source_language"],
+        "status": inv["status"],
+        "lines": [
+            {"description": l["description"],
+             "quantity": float(l["quantity"]),
+             "unit_price": float(l["unit_price"])}
+            for l in lines
+        ],
+    }
+
+@router.post("/{order_id}/approve")
+def approve_invoice(order_id: int):
+    with engine.begin() as conn:
+        result = conn.execute(
+            text("UPDATE work_orders SET status = 'approved' WHERE id = :id"),
+            {"id": order_id},
+        )
+        if result.rowcount == 0:
+            raise HTTPException(404, "Work order not found")
+    return {"order_id": order_id, "status": "approved"}
