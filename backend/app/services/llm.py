@@ -1,4 +1,3 @@
-import os
 from openai import OpenAI
 from pydantic import BaseModel
 from dotenv import load_dotenv, find_dotenv
