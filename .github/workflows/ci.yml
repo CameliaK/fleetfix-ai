@@ -14,5 +14,5 @@ jobs:
       - run: pip install -r backend/requirements.txt
       - run: pip install pytest httpx ruff
       - run: ruff check backend
-      - run: pytest backend/tests
+      - run: pytest tests
         working-directory: backend
